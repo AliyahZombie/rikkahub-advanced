@@ -20,11 +20,11 @@ android {
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "me.rerere.rikkahub"
+        applicationId = "me.rerere.rikkahub.advanced"
         minSdk = 26
         targetSdk = 36
         versionCode = 108
-        versionName = "1.6.9"
+        versionName = "1.6.9-Advanced"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
@@ -83,7 +83,7 @@ android {
             buildConfigField("String", "VERSION_CODE", "\"${android.defaultConfig.versionCode}\"")
         }
         debug {
-            applicationIdSuffix = ".debug"
+            //applicationIdSuffix = ".debug"
             buildConfigField("String", "VERSION_NAME", "\"${android.defaultConfig.versionName}\"")
             buildConfigField("String", "VERSION_CODE", "\"${android.defaultConfig.versionCode}\"")
         }

@@ -89,8 +89,13 @@ fun SettingAboutPage() {
                     )
 
                     Text(
-                        text = "RikkaHub",
+                        text = "RikkaHub-Advanced",
                         style = MaterialTheme.typography.displaySmall,
+                    )
+
+                    Text(
+                        text = "From RikkaHub",
+                        style = MaterialTheme.typography.bodySmall,
                     )
 
                     Row(

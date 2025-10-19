@@ -2,7 +2,10 @@ package me.rerere.rikkahub.ui.pages.setting
 
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
@@ -16,17 +19,17 @@ import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
-import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
-import androidx.compose.foundation.lazy.staggeredgrid.items
-import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.ListItem
+import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
@@ -36,7 +39,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
@@ -54,6 +56,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.composables.icons.lucide.Camera
+import com.composables.icons.lucide.ChevronRight
 import com.composables.icons.lucide.GripHorizontal
 import com.composables.icons.lucide.Image
 import com.composables.icons.lucide.Import
@@ -79,7 +82,7 @@ import me.rerere.rikkahub.ui.pages.setting.components.ProviderConfigure
 import me.rerere.rikkahub.utils.ImageUtils
 import org.koin.androidx.compose.koinViewModel
 import sh.calvin.reorderable.ReorderableItem
-import sh.calvin.reorderable.rememberReorderableLazyStaggeredGridState
+import sh.calvin.reorderable.rememberReorderableLazyListState
 import java.util.Locale
 
 @Composable
@@ -108,7 +111,7 @@ fun SettingProviderPage(vm: SettingVM = koinViewModel()) {
                     BackButton()
                 },
                 actions = {
-                    if(Locale.getDefault().language == "zh") {
+                    if (Locale.getDefault().language == "zh") {
                         IconButton(
                             onClick = {
                                 navController.navigate(Screen.SettingProviderDetail(providerId = "1b1395ed-b702-4aeb-8bc1-b681c4456953"))
@@ -162,47 +165,45 @@ fun SettingProviderPage(vm: SettingVM = koinViewModel()) {
                 shape = CircleShape,
             )
 
-            val lazyListState = rememberLazyStaggeredGridState()
-            val reorderableState = rememberReorderableLazyStaggeredGridState(lazyListState) { from, to ->
+            // 列表 + 拖拽排序
+            val lazyListState = rememberLazyListState()
+            val reorderableState = rememberReorderableLazyListState(lazyListState) { from, to ->
                 val newProviders = settings.providers.toMutableList().apply {
                     add(to.index, removeAt(from.index))
                 }
                 vm.updateSettings(settings.copy(providers = newProviders))
             }
-            LazyVerticalStaggeredGrid(
+
+            LazyColumn(
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(1f)
                     .imePadding(),
-                contentPadding = PaddingValues(16.dp),
-                verticalItemSpacing = 8.dp,
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
                 state = lazyListState,
-                columns = StaggeredGridCells.Fixed(2)
+                contentPadding = PaddingValues(vertical = 10.dp, horizontal = 8.dp)
             ) {
                 items(filteredProviders, key = { it.id }) { provider ->
                     ReorderableItem(
                         state = reorderableState,
                         key = provider.id
                     ) { isDragging ->
-                        ProviderItem(
+                        ProviderListItem(
                             modifier = Modifier
-                                .scale(if (isDragging) 0.95f else 1f)
-                                .fillMaxWidth(),
+                                .fillMaxWidth()
+                                .scale(if (isDragging) 0.98f else 1f),
                             provider = provider,
                             dragHandle = {
                                 val haptic = LocalHapticFeedback.current
                                 IconButton(
                                     onClick = {},
-                                    modifier = Modifier
-                                        .longPressDraggableHandle(
-                                            onDragStarted = {
-                                                haptic.performHapticFeedback(HapticFeedbackType.GestureThresholdActivate)
-                                            },
-                                            onDragStopped = {
-                                                haptic.performHapticFeedback(HapticFeedbackType.GestureEnd)
-                                            }
-                                        )
+                                    modifier = Modifier.longPressDraggableHandle(
+                                        onDragStarted = {
+                                            haptic.performHapticFeedback(HapticFeedbackType.GestureThresholdActivate)
+                                        },
+                                        onDragStopped = {
+                                            haptic.performHapticFeedback(HapticFeedbackType.GestureEnd)
+                                        }
+                                    )
                                 ) {
                                     Icon(
                                         imageVector = Lucide.GripHorizontal,
@@ -211,10 +212,15 @@ fun SettingProviderPage(vm: SettingVM = koinViewModel()) {
                                 }
                             },
                             onClick = {
-                                navController.navigate(Screen.SettingProviderDetail(providerId = provider.id.toString()))
+                                navController.navigate(
+                                    Screen.SettingProviderDetail(providerId = provider.id.toString())
+                                )
                             }
                         )
                     }
+
+                    // 分割线：与左侧图标对齐（36dp 图标 + 16dp ListItem 内边距 + 16dp 屏幕边距 ≈ 68dp）
+                    HorizontalDivider(modifier = Modifier.padding(start = 72.dp))
                 }
             }
         }
@@ -306,7 +312,7 @@ private fun ImportProviderButton(
                             onClick = {
                                 showImportDialog = false
                                 pickImageLauncher.launch(
-                                    androidx.activity.result.PickVisualMediaRequest(
+                                    PickVisualMediaRequest(
                                         ActivityResultContracts.PickVisualMedia.ImageOnly
                                     )
                                 )
@@ -427,7 +433,6 @@ private fun handleImageQRCode(
     }
 }
 
-
 @Composable
 private fun AddButton(onAdd: (ProviderSetting) -> Unit) {
     val dialogState = useEditState<ProviderSetting> {
@@ -480,59 +485,50 @@ private fun AddButton(onAdd: (ProviderSetting) -> Unit) {
 }
 
 @Composable
-private fun ProviderItem(
+private fun ProviderListItem(
     provider: ProviderSetting,
     modifier: Modifier = Modifier,
     dragHandle: @Composable () -> Unit,
     onClick: () -> Unit
 ) {
-    Card(
-        modifier = modifier,
-        colors = CardDefaults.cardColors(
-            containerColor = if (provider.enabled) {
-                MaterialTheme.colorScheme.surfaceColorAtElevation(4.dp)
-            } else MaterialTheme.colorScheme.errorContainer,
+    val containerColor =
+        if (provider.enabled) MaterialTheme.colorScheme.surface
+        else MaterialTheme.colorScheme.errorContainer
+
+    val interactionSource = remember { MutableInteractionSource() }
+
+    ListItem(
+        modifier = modifier.clickable(
+            interactionSource = interactionSource,
+            indication = null,
+            onClick = onClick
         ),
-        onClick = {
-            onClick()
-        }
-    ) {
-        Column(
-            modifier = Modifier.padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                AutoAIIcon(
-                    name = provider.name,
-                    modifier = Modifier.size(36.dp)
-                )
-                Spacer(modifier = Modifier.weight(1f))
-                dragHandle()
-            }
-            Column(
-                modifier = Modifier,
-                verticalArrangement = Arrangement.spacedBy(4.dp),
-            ) {
+        leadingContent = {
+            AutoAIIcon(
+                name = provider.name,
+                modifier = Modifier.size(36.dp)
+            )
+        },
+        headlineContent = {
+            Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
                     text = provider.name,
-                    style = MaterialTheme.typography.titleLarge,
-                    maxLines = 2,
+                    style = MaterialTheme.typography.titleMedium,
+                    maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
-                ProvideTextStyle(MaterialTheme.typography.labelSmall) {
-                    CompositionLocalProvider(LocalContentColor provides LocalContentColor.current.copy(alpha = 0.7f)) {
-                        provider.shortDescription()
-                    }
-                }
+                Spacer(Modifier.width(8.dp))
                 FlowRow(
                     horizontalArrangement = Arrangement.spacedBy(4.dp),
                     verticalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
                     Tag(type = if (provider.enabled) TagType.SUCCESS else TagType.WARNING) {
-                        Text(stringResource(if (provider.enabled) R.string.setting_provider_page_enabled else R.string.setting_provider_page_disabled))
+                        Text(
+                            stringResource(
+                                if (provider.enabled) R.string.setting_provider_page_enabled
+                                else R.string.setting_provider_page_disabled
+                            )
+                        )
                     }
                     Tag(type = TagType.INFO) {
                         Text(
@@ -549,6 +545,28 @@ private fun ProviderItem(
                     }
                 }
             }
-        }
-    }
+        },
+        supportingContent = {
+            ProvideTextStyle(MaterialTheme.typography.bodySmall) {
+                CompositionLocalProvider(
+                    LocalContentColor provides LocalContentColor.current.copy(alpha = 0.7f)
+                ) {
+                    provider.shortDescription()
+                }
+            }
+        },
+        trailingContent = {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                dragHandle()
+                Icon(
+                    imageVector = Lucide.ChevronRight,
+                    contentDescription = null,
+                    modifier = Modifier.padding(start = 4.dp)
+                )
+            }
+        },
+        colors = ListItemDefaults.colors(containerColor = containerColor),
+        tonalElevation = if (provider.enabled) 0.dp else 2.dp,
+        shadowElevation = 0.dp
+    )
 }

@@ -23,6 +23,7 @@ class UpdateChecker(private val client: OkHttpClient) {
     private val json = Json { ignoreUnknownKeys = true }
 
     fun checkUpdate(): Flow<UiState<UpdateInfo>> = flow {
+        return@flow
         emit(UiState.Loading)
         emit(
             UiState.Success(

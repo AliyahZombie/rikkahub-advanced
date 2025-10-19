@@ -98,38 +98,7 @@ fun SettingAboutPage() {
                         style = MaterialTheme.typography.bodySmall,
                     )
 
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(
-                            8.dp,
-                            Alignment.CenterHorizontally
-                        ),
-                        modifier = Modifier.fillMaxWidth(),
-                    ) {
-                        IconButton(
-                            onClick = {
-                                context.joinQQGroup("wMdqlDETtzIz6o49HrBR2TeQlwcX6RH9")
-                            }
-                        ) {
-                            Icon(
-                                imageVector = TencentQQIcon,
-                                contentDescription = "QQ",
-                                tint = MaterialTheme.colorScheme.secondary
-                            )
-                        }
 
-                        IconButton(
-                            onClick = {
-                                context.openUrl("https://discord.gg/9weBqxe5c4")
-                            }
-                        ) {
-                            Icon(
-                                imageVector = DiscordIcon,
-                                contentDescription = "Discord",
-                                tint = MaterialTheme.colorScheme.secondary
-                            )
-                        }
-                    }
                 }
             }
 
@@ -173,24 +142,7 @@ fun SettingAboutPage() {
                 )
             }
 
-            item {
-                ListItem(
-                    headlineContent = {
-                        Text(stringResource(R.string.about_page_website))
-                    },
-                    supportingContent = {
-                        Text(
-                            text = "https://rikka-ai.com"
-                        )
-                    },
-                    modifier = Modifier.clickable {
-                        context.openUrl("https://rikka-ai.com/")
-                    },
-                    leadingContent = {
-                        Icon(Lucide.Earth, null)
-                    }
-                )
-            }
+
 
             item {
                 ListItem(
@@ -199,11 +151,11 @@ fun SettingAboutPage() {
                     },
                     supportingContent = {
                         Text(
-                            text = "https://github.com/rikkahub/rikkahub"
+                            text = "https://github.com/AliyahZombie/rikkahub-advanced"
                         )
                     },
                     modifier = Modifier.clickable {
-                        context.openUrl("https://github.com/rikkahub/rikkahub")
+                        context.openUrl("https://github.com/AliyahZombie/rikkahub-advanced")
                     },
                     leadingContent = {
                         Icon(Lucide.Github, null)

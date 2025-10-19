@@ -55,6 +55,7 @@ import me.rerere.rikkahub.data.datastore.Settings
 import me.rerere.rikkahub.data.datastore.findProvider
 import me.rerere.rikkahub.data.datastore.getCurrentAssistant
 import me.rerere.rikkahub.data.datastore.getCurrentChatModel
+import me.rerere.rikkahub.data.datastore.newGetCurrentChatModel
 import me.rerere.rikkahub.data.model.Conversation
 import me.rerere.rikkahub.ui.components.ai.ChatInput
 import me.rerere.rikkahub.ui.context.LocalNavController
@@ -406,7 +407,7 @@ private fun TopBar(
             ) {
                 Column {
                     val assistant = settings.getCurrentAssistant()
-                    val model = settings.getCurrentChatModel()
+                    val model = settings.newGetCurrentChatModel(conversation)
                     val provider = model?.findProvider(providers = settings.providers, checkOverwrite = false)
                     Text(
                         text = conversation.title.ifBlank { stringResource(R.string.chat_page_new_chat) },

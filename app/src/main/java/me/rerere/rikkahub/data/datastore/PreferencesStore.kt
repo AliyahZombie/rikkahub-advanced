@@ -28,6 +28,7 @@ import me.rerere.rikkahub.data.ai.prompts.DEFAULT_TRANSLATION_PROMPT
 import me.rerere.rikkahub.data.datastore.migration.PreferenceStoreV1Migration
 import me.rerere.rikkahub.data.model.Assistant
 import me.rerere.rikkahub.data.model.Avatar
+import me.rerere.rikkahub.data.model.Conversation
 import me.rerere.rikkahub.data.model.Tag
 import me.rerere.rikkahub.ui.theme.PresetThemes
 import me.rerere.rikkahub.utils.JsonInstant
@@ -390,6 +391,11 @@ fun List<ProviderSetting>.findModelById(uuid: Uuid): Model? {
 fun Settings.getCurrentChatModel(): Model? {
     return findModelById(this.getCurrentAssistant().chatModelId ?: this.chatModelId)
 }
+
+fun Settings.newGetCurrentChatModel(conv: Conversation): Model? {
+    return findModelById(conv.chatModelId)
+}
+
 
 fun Settings.getCurrentAssistant(): Assistant {
     return this.assistants.find { it.id == assistantId } ?: this.assistants.first()

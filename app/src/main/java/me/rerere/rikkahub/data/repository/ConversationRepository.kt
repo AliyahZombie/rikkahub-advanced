@@ -114,7 +114,8 @@ class ConversationRepository(
             assistantId = conversation.assistantId.toString(),
             truncateIndex = conversation.truncateIndex,
             chatSuggestions = JsonInstant.encodeToString(conversation.chatSuggestions),
-            isPinned = conversation.isPinned
+            isPinned = conversation.isPinned,
+            chatModelId = conversation.chatModelId.toString()
         )
     }
 
@@ -132,6 +133,7 @@ class ConversationRepository(
             truncateIndex = conversationEntity.truncateIndex,
             chatSuggestions = JsonInstant.decodeFromString(conversationEntity.chatSuggestions),
             isPinned = conversationEntity.isPinned,
+            chatModelId = Uuid.parse(conversationEntity.chatModelId)
         )
     }
 

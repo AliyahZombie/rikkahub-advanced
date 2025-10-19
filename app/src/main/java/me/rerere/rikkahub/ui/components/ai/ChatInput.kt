@@ -112,6 +112,7 @@ import me.rerere.rikkahub.data.datastore.Settings
 import me.rerere.rikkahub.data.datastore.getCurrentAssistant
 import me.rerere.rikkahub.data.datastore.getCurrentChatModel
 import me.rerere.rikkahub.data.ai.mcp.McpManager
+import me.rerere.rikkahub.data.datastore.newGetCurrentChatModel
 import me.rerere.rikkahub.data.model.Assistant
 import me.rerere.rikkahub.data.model.Conversation
 import me.rerere.rikkahub.ui.components.ui.KeepScreenOn
@@ -225,7 +226,7 @@ fun ChatInput(
                     // Search
                     val enableSearchMsg = stringResource(R.string.web_search_enabled)
                     val disableSearchMsg = stringResource(R.string.web_search_disabled)
-                    val chatModel = settings.getCurrentChatModel()
+                    val chatModel = settings.newGetCurrentChatModel(conversation)
                     SearchPickerButton(
                         enableSearch = enableSearch,
                         settings = settings,
@@ -246,7 +247,7 @@ fun ChatInput(
                     )
 
                     // Reasoning
-                    val model = settings.getCurrentChatModel()
+                    val model = settings.newGetCurrentChatModel(conversation)
                     if (model?.abilities?.contains(ModelAbility.REASONING) == true) {
                         ReasoningButton(
                             reasoningTokens = assistant.thinkingBudget ?: 0,

@@ -24,4 +24,7 @@ data class ConversationEntity(
     val chatSuggestions: String,
     @ColumnInfo("is_pinned", defaultValue = "0")
     val isPinned: Boolean,
+    @ColumnInfo("chatModelId", defaultValue = "dd82297e-4237-4d3c-85b3-58d5c7084fc2")
+    val chatModelId: String,
+
 )

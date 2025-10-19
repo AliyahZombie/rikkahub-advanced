@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 11,
-    "identityHash": "770362e1ea02a4a2d7cb6d19a2ba2a8b",
+    "identityHash": "02be5c13310f2f51639059c71568858d",
     "entities": [
       {
         "tableName": "ConversationEntity",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `assistant_id` TEXT NOT NULL DEFAULT '0950e2dc-9bd5-4801-afa3-aa887aa36b4e', `title` TEXT NOT NULL, `nodes` TEXT NOT NULL, `create_at` INTEGER NOT NULL, `update_at` INTEGER NOT NULL, `truncate_index` INTEGER NOT NULL DEFAULT -1, `suggestions` TEXT NOT NULL DEFAULT '[]', `is_pinned` INTEGER NOT NULL DEFAULT 0, `chatModelId` TEXT NOT NULL, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `assistant_id` TEXT NOT NULL DEFAULT '0950e2dc-9bd5-4801-afa3-aa887aa36b4e', `title` TEXT NOT NULL, `nodes` TEXT NOT NULL, `create_at` INTEGER NOT NULL, `update_at` INTEGER NOT NULL, `truncate_index` INTEGER NOT NULL DEFAULT -1, `suggestions` TEXT NOT NULL DEFAULT '[]', `is_pinned` INTEGER NOT NULL DEFAULT 0, `chatModelId` TEXT NOT NULL DEFAULT 'dd82297e-4237-4d3c-85b3-58d5c7084fc2', PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -70,7 +70,8 @@
             "fieldPath": "chatModelId",
             "columnName": "chatModelId",
             "affinity": "TEXT",
-            "notNull": true
+            "notNull": true,
+            "defaultValue": "'dd82297e-4237-4d3c-85b3-58d5c7084fc2'"
           }
         ],
         "primaryKey": {
@@ -155,7 +156,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '770362e1ea02a4a2d7cb6d19a2ba2a8b')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '02be5c13310f2f51639059c71568858d')"
     ]
   }
 }

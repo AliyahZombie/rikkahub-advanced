@@ -24,6 +24,7 @@ import me.rerere.ai.ui.UIMessagePart
 import me.rerere.ai.ui.isEmptyInputMessage
 import me.rerere.rikkahub.data.datastore.Settings
 import me.rerere.rikkahub.data.datastore.SettingsStore
+import me.rerere.rikkahub.data.datastore.getAssistantById
 import me.rerere.rikkahub.data.datastore.getCurrentChatModel
 import me.rerere.rikkahub.data.model.Assistant
 import me.rerere.rikkahub.data.model.AssistantAffectScope
@@ -138,18 +139,10 @@ class ChatVM(
     // 设置聊天模型
     fun setChatModel(assistant: Assistant, model: Model) {
         viewModelScope.launch {
-            settingsStore.update { settings ->
-                settings.copy(
-                    assistants = settings.assistants.map {
-                        if (it.id == assistant.id) {
-                            it.copy(
-                                chatModelId = model.id
-                            )
-                        } else {
-                            it
-                        }
-                    })
-            }
+            val updatedConversation = conversation.value.copy(
+                chatModelId = model.id
+            )
+            chatService.saveConversation(_conversationId, updatedConversation)
         }
     }
 
@@ -281,7 +274,8 @@ class ChatVM(
         val newConversation = Conversation(
             id = Uuid.random(),
             assistantId = settings.value.assistantId,
-            messageNodes = nodes
+            messageNodes = nodes,
+            chatModelId = currentChatModel.value?.id ?: Uuid.parse("dd82297e-4237-4d3c-85b3-58d5c7084fc2")
         )
         chatService.saveConversation(newConversation.id, newConversation)
         return newConversation

@@ -8,6 +8,12 @@ import me.rerere.ai.ui.UIMessage
 import me.rerere.ai.ui.UIMessagePart
 import me.rerere.ai.util.InstantSerializer
 import me.rerere.rikkahub.data.datastore.DEFAULT_ASSISTANT_ID
+import me.rerere.rikkahub.data.datastore.DEFAULT_PROVIDERS
+import me.rerere.rikkahub.data.datastore.SettingsStore
+import me.rerere.rikkahub.data.datastore.getAssistantById
+import org.koin.core.component.KoinComponent
+import  org.koin.core.component.get
+
 import java.time.Instant
 import kotlin.uuid.Uuid
 
@@ -24,6 +30,7 @@ data class Conversation(
     val createAt: Instant = Instant.now(),
     @Serializable(with = InstantSerializer::class)
     val updateAt: Instant = Instant.now(),
+    val chatModelId: Uuid
 ) {
     val files: List<Uri>
         get() {
@@ -92,7 +99,7 @@ data class Conversation(
         )
     }
 
-    companion object {
+    companion object: KoinComponent {
         fun ofId(
             id: Uuid,
             assistantId: Uuid = DEFAULT_ASSISTANT_ID,
@@ -100,7 +107,8 @@ data class Conversation(
         ) = Conversation(
             id = id,
             assistantId = assistantId,
-            messageNodes = messages
+            messageNodes = messages,
+            chatModelId = get<SettingsStore>().settingsFlow.value.getAssistantById(assistantId)?.chatModelId ?: Uuid.parse("dd82297e-4237-4d3c-85b3-58d5c7084fc2")
         )
     }
 }

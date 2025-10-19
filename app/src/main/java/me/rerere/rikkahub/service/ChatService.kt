@@ -65,6 +65,7 @@ import me.rerere.rikkahub.data.datastore.findModelById
 import me.rerere.rikkahub.data.datastore.findProvider
 import me.rerere.rikkahub.data.datastore.getCurrentAssistant
 import me.rerere.rikkahub.data.datastore.getCurrentChatModel
+import me.rerere.rikkahub.data.datastore.newGetCurrentChatModel
 import me.rerere.rikkahub.data.model.Conversation
 import me.rerere.rikkahub.data.model.toMessageNode
 import me.rerere.rikkahub.data.repository.ConversationRepository
@@ -346,12 +347,13 @@ class ChatService(
         conversationId: Uuid,
         messageRange: ClosedRange<Int>? = null
     ) {
-        val settings = settingsStore.settingsFlow.first()
-        val model = settings.getCurrentChatModel() ?: return
+
 
         runCatching {
             val conversation = getConversationFlow(conversationId).value
-
+            val settings = settingsStore.settingsFlow.first()
+            //val model = settings.getCurrentChatModel() ?: return
+            val model = settings.newGetCurrentChatModel(conversation) ?: return
             // reset suggestions
             updateConversation(conversationId, conversation.copy(chatSuggestions = emptyList()))
 
@@ -629,7 +631,7 @@ class ChatService(
         runCatching {
             val settings = settingsStore.settingsFlow.first()
             val model =
-                settings.findModelById(settings.titleModelId) ?: settings.getCurrentChatModel()
+                settings.findModelById(settings.titleModelId) ?: settings.newGetCurrentChatModel(conversation)
                 ?: return
             val provider = model.findProvider(settings.providers) ?: return
 
